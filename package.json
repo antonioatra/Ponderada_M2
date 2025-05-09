@@ -1,0 +1,16 @@
+{
+  "name": "ponderadam2-b",
+  "version": "1.0.0",
+  "description": "Se você for da turma 16 ou 18, utilize este outro enunciado para realizar as ponderadas de UX e Computação: [https://github.com/InteliContent/M2/blob/main/README.md](https://github.com/InteliContent/M2/blob/main/README.md)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
