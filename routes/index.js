@@ -12,7 +12,7 @@ router.delete('/users/:id', userController.deletarUsuario);
 const tasksController = require('../controllers/tasks');
 
 router.post('/tasks', tasksController.criarTasks);
-router.get('/tasks', tasksController.listarTasks);
+router.get('/tasks/:user_id', tasksController.listarTasks);
 router.put('/tasks/:id', tasksController.editarTasks);
 router.delete('/tasks/:id', tasksController.excluirTasks);
 
@@ -25,7 +25,7 @@ router.get('/categories', categoriesController.listarCategorias);
 const activitiesController = require('../controllers/activities');
 
 router.post('/tasks/:task_id/activities', activitiesController.criarAtividades);
-router.get('/tasks/:task_id/activities', activitiesController.listarAtividades);
+router.get('/tasks/:task_id/activities/:user_id', activitiesController.listarAtividades);
 router.put('/tasks/:task_id/activities/:id', activitiesController.editarAtividades);
 router.delete('/tasks/:task_id/activities/:id', activitiesController.deletarAtividades); 
 

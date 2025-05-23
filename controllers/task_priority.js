@@ -1,4 +1,4 @@
-const poll = require('../config/database')
+const pool = require('../config/database')
 
 exports.criarTaskPrioridade = async(req, res) => {
     const {task_id, priority_id} = req.body;

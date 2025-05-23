@@ -15,7 +15,7 @@ exports.criarUsuario = async (req, res) => {
 exports.editarUsuario = async (req,res) => {
   const {id} = req.params;
   const {name, cpf, birthdate} = req.body;
-  const query = "UPDATE users SET nome=$1, cpf=$2, birthdate=$3 WHERE id = $4 RETURNING *"
+  const query = "UPDATE users SET name=$1, cpf=$2, birthdate=$3 WHERE id = $4 RETURNING *"
   const values = [name, cpf, birthdate, id]
 
   try {
