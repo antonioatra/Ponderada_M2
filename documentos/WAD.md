@@ -199,7 +199,7 @@ http://localhost:3000/api
 
 ## **Endpoints**
 
-### **👥 Users (Usuários)**
+### **Users (Usuários)**
 
 #### **Criar Usuário**
 
@@ -263,7 +263,7 @@ http://localhost:3000/api
 
 ---
 
-### **✅ Tasks (Tarefas)**
+### **Tasks (Tarefas)**
 
 #### **Criar Tarefa**
 
@@ -322,7 +322,7 @@ http://localhost:3000/api
 
 ---
 
-### **📂 Categories (Categorias)**
+### **Categories (Categorias)**
 
 #### **Listar Categorias**
 
@@ -339,7 +339,7 @@ http://localhost:3000/api
 
 ---
 
-### **🎯 Activities (Atividades)**
+### **Activities (Atividades)**
 
 #### **Criar Atividade**
 
@@ -397,7 +397,7 @@ http://localhost:3000/api
 
 ---
 
-### **💬 Comments (Comentários)**
+### **Comments (Comentários)**
 
 #### **Criar Comentário**
 
@@ -451,7 +451,7 @@ http://localhost:3000/api
 
 ---
 
-### **⚡ Priorities (Prioridades)**
+### **Priorities (Prioridades)**
 
 #### **Listar Prioridades**
 
@@ -479,7 +479,7 @@ http://localhost:3000/api
 
 ---
 
-### **🎯 Task Priority (Prioridade de Tarefas)**
+### **Task Priority (Prioridade de Tarefas)**
 
 #### **Criar Prioridade da Tarefa**
 
@@ -539,7 +539,7 @@ http://localhost:3000/api
 
 ---
 
-### **⏰ Reminders (Lembretes)**
+### **Reminders (Lembretes)**
 
 #### **Criar Lembrete**
 
@@ -590,7 +590,7 @@ http://localhost:3000/api
 
 ---
 
-### **🏷️ Tags**
+### **Tags**
 
 #### **Criar Tag**
 
@@ -640,7 +640,7 @@ http://localhost:3000/api
 
 ---
 
-### **🔗 Task Tags (Relacionamento Tarefa-Tag)**
+### **ask Tags (Relacionamento Tarefa-Tag)**
 
 #### **Criar Relacionamento Tarefa-Tag**
 
