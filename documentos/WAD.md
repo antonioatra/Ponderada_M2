@@ -706,33 +706,6 @@ http://localhost:3000/api
   "error": "Mensagem de erro detalhada"  
 }
 
-## **Problemas Identificados no Código**
-
-### **🚨 Inconsistências Encontradas**
-
-1. **Users Controller**: Campo `nome` na query UPDATE vs `name` no SELECT/INSERT  
-2. **Tasks Controller**: Método `listarTasks` espera `user_id` como parâmetro da rota, mas o endpoint não define isso  
-3. **Activities Controller**: Query `listarAtividades` usa `user_id` ao invés de `task_id`  
-4. **Task Priority Controller**: Importação `poll` ao invés de `pool`  
-5. **Task Tags Controller**: Método `editarTaskTag` não usa WHERE clause (atualiza todos os registros)  
-6. **Comments Controller**: Métodos não verificam se `task_id` nos parâmetros corresponde ao body
-
-### **📝 Sugestões de Correção**
-
-1. **Padronizar nomes de campos** entre queries e responses  
-2. **Corrigir rotas** para corresponder aos controllers  
-3. **Adicionar validações** de parâmetros e relacionamentos  
-4. **Implementar transações** para operações que afetam múltiplas tabelas  
-5. **Adicionar middleware** de validação de entrada
-
-## **Observações Importantes**
-
-* Todos os endpoints esperam dados em formato JSON  
-* IDs devem ser números inteiros válidos  
-* Campos de data devem seguir formato ISO 8601  
-* Alguns endpoints têm inconsistências entre a definição da rota e implementação do controller  
-* É recomendado implementar validação de entrada e sanitização de dados  
-* Considere adicionar autenticação e autorização aos endpoints sensíveis
 
 
 
