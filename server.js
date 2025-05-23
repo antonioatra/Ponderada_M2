@@ -1,15 +1,16 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const router = require('./routes');
+
 const app = express();
-const PORT = 3000;
+const port = 3333;
 
-// Middleware para processar JSON
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
-// Rotas
-const routes = require('./routes/index');
-app.use('/', routes);
+app.use('/api', router);
 
-// Inicializa o servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
 });
