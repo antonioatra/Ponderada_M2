@@ -2,7 +2,9 @@
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     cpf TEXT NOT NULL,
-    birthdate DATE NOT NULL
+    birthdate DATE NOT NULL,
+    email TEXT NOT NULL,
+    senha VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE categories (

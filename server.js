@@ -1,28 +1,40 @@
+require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const router = require('./routes');
-const frontRoutes = require('./routes/frontRoutes');
+const app = express();
+const db = require('./config/database');
 const path = require('path');
 
-const app = express();
-const port = 3000;
+// Set view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Middleware
-app.use(cors());
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// View engine
-app.set("view engine", "ejs");
-app.set('views', path.join(__dirname, 'views'));
-
-// Static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Routes
-app.use('/', frontRoutes);
-app.use('/api', router);
-
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+// Connect to database
+db.connect()
+  .then(() => {
+    console.log('✅ Conectado ao banco de dados PostgreSQL');
+    
+    // Import and use routes
+    const apiRoutes = require('./routes/apiRoutes');
+    const frontendRoutes = require('./routes/frontRoutes');
+    
+    // Use routes
+    app.use('/api', apiRoutes);
+    app.use('/', frontendRoutes);
+    
+    // Start server
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('❌ Erro ao conectar ao banco de dados:', err);
+    process.exit(1);
+  });

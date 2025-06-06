@@ -1,0 +1,1072 @@
+<!-- Complete User Management System -->
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        <div class="mb-4 sm:mb-0">
+          <h1 class="text-3xl font-bold text-gray-900">Gerenciamento de Usuários</h1>
+          <p class="text-gray-600 mt-1">Gerencie todos os usuários do sistema</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="userManager.createUser()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2">
+            <i class="fas fa-user-plus"></i>
+            <span>Novo Usuário</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Buscar usuários</label>
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="Nome, email ou CPF..." 
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                   onkeyup="userManager.searchUsers(this.value)">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Filtrar por status</label>
+          <select id="statusFilter" onchange="userManager.filterUsers()" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Todos</option>
+            <option value="complete">Perfil Completo</option>
+            <option value="incomplete">Perfil Incompleto</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+          <select id="sortBy" onchange="userManager.sortUsers()" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="name">Nome</option>
+            <option value="email">Email</option>
+            <option value="created">Data de Criação</option>
+            <option value="tasks">Número de Tarefas</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button onclick="userManager.clearFilters()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition duration-200">
+            <i class="fas fa-times mr-2"></i>
+            Limpar Filtros
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-blue-100 rounded-lg p-3">
+            <i class="fas fa-users text-blue-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total de Usuários</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalUsers">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-green-100 rounded-lg p-3">
+            <i class="fas fa-user-check text-green-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Perfis Completos</p>
+            <p class="text-2xl font-bold text-gray-900" id="completeProfiles">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-yellow-100 rounded-lg p-3">
+            <i class="fas fa-user-edit text-yellow-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Perfis Incompletos</p>
+            <p class="text-2xl font-bold text-gray-900" id="incompleteProfiles">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-purple-100 rounded-lg p-3">
+            <i class="fas fa-tasks text-purple-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total de Tarefas</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalTasks">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-lg shadow-sm">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-gray-900">Lista de Usuários</h2>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-500" id="userCount">0 usuários</span>
+            <button onclick="userManager.toggleView()" class="text-gray-400 hover:text-gray-600" id="viewToggle">
+              <i class="fas fa-th-large"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div id="tableView" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" id="selectAll" onchange="userManager.selectAll(this.checked)" class="rounded border-gray-300">
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPF</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nascimento</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarefas</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+            <!-- Users will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card View -->
+      <div id="cardView" class="hidden p-6">
+        <div id="usersCardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- User cards will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-12">
+        <div class="text-gray-400 mb-4">
+          <i class="fas fa-users text-6xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum usuário encontrado</h3>
+        <p class="text-gray-600 mb-6">Comece adicionando o primeiro usuário ao sistema!</p>
+        <button onclick="userManager.createUser()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200">
+          Criar Primeiro Usuário
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="text-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">Carregando usuários...</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="hidden bg-white rounded-lg shadow-sm mt-6 p-4">
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-700">
+          Mostrando <span id="paginationInfo">1-10 de 50</span> usuários
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="userManager.previousPage()" id="prevButton" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            Anterior
+          </button>
+          <div id="pageNumbers" class="flex space-x-1">
+            <!-- Page numbers will be generated here -->
+          </div>
+          <button onclick="userManager.nextPage()" id="nextButton" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            Próximo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class UserManager {
+  constructor() {
+    this.users = [];
+    this.filteredUsers = [];
+    this.selectedUsers = [];
+    this.currentView = 'table'; // 'table' or 'card'
+    this.currentPage = 1;
+    this.itemsPerPage = 10;
+    this.searchTerm = '';
+    this.statusFilter = '';
+    this.sortBy = 'name';
+    this.sortOrder = 'asc';
+  }
+
+  async init() {
+    try {
+      await this.loadUsers();
+      this.renderUsers();
+      this.updateStatistics();
+    } catch (error) {
+      console.error('Error initializing user manager:', error);
+      this.showNotification('Erro ao carregar usuários', 'error');
+    }
+  }
+
+  async loadUsers() {
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) {
+        throw new Error('Erro ao carregar usuários');
+      }
+      
+      this.users = await response.json();
+      
+      // Load task counts for each user
+      await this.loadUserTaskCounts();
+      
+      this.filteredUsers = [...this.users];
+    } catch (error) {
+      console.error('Error loading users:', error);
+      throw error;
+    }
+  }
+
+  async loadUserTaskCounts() {
+    for (const user of this.users) {
+      try {
+        const response = await fetch(`/api/tasks/${user.id}`);
+        if (response.ok) {
+          const tasks = await response.json();
+          user.taskCount = tasks.length;
+          user.completedTasks = tasks.filter(task => task.status === 'completed').length;
+        } else {
+          user.taskCount = 0;
+          user.completedTasks = 0;
+        }
+      } catch (error) {
+        user.taskCount = 0;
+        user.completedTasks = 0;
+      }
+    }
+  }
+
+  renderUsers() {
+    if (this.filteredUsers.length === 0) {
+      this.showEmptyState();
+      return;
+    }
+
+    this.hideEmptyState();
+    this.hideLoadingState();
+
+    if (this.currentView === 'table') {
+      this.renderTableView();
+    } else {
+      this.renderCardView();
+    }
+
+    this.updatePagination();
+    this.updateUserCount();
+  }
+
+  renderTableView() {
+    const tbody = document.getElementById('usersTableBody');
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+
+    tbody.innerHTML = paginatedUsers.map(user => `
+      <tr class="hover:bg-gray-50 transition duration-150">
+        <td class="px-6 py-4 whitespace-nowrap">
+          <input type="checkbox" value="${user.id}" onchange="userManager.toggleUserSelection(${user.id}, this.checked)" class="rounded border-gray-300">
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 h-10 w-10">
+              <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
+                ${this.getInitials(user.name)}
+              </div>
+            </div>
+            <div class="ml-4">
+              <div class="text-sm font-medium text-gray-900">${user.name || 'Nome não informado'}</div>
+              <div class="text-sm text-gray-500">ID: ${user.id}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">${user.email || 'Não informado'}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">${user.cpf || 'Não informado'}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">${user.birthdate ? this.formatDate(user.birthdate) : 'Não informado'}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">${user.taskCount || 0}</div>
+          <div class="text-xs text-gray-500">${user.completedTasks || 0} concluídas</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          ${this.getUserStatusBadge(user)}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <div class="flex space-x-2">
+            <button onclick="userManager.viewUser(${user.id})" class="text-indigo-600 hover:text-indigo-900 transition duration-150">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button onclick="userManager.editUser(${user.id})" class="text-blue-600 hover:text-blue-900 transition duration-150">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="userManager.deleteUser(${user.id})" class="text-red-600 hover:text-red-900 transition duration-150">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  renderCardView() {
+    const container = document.getElementById('usersCardContainer');
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+
+    container.innerHTML = paginatedUsers.map(user => `
+      <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition duration-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-lg">
+              ${this.getInitials(user.name)}
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">${user.name || 'Nome não informado'}</h3>
+              <p class="text-sm text-gray-500">ID: ${user.id}</p>
+            </div>
+          </div>
+          <input type="checkbox" value="${user.id}" onchange="userManager.toggleUserSelection(${user.id}, this.checked)" class="rounded border-gray-300">
+        </div>
+        
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center text-sm">
+            <i class="fas fa-envelope mr-2 text-gray-400"></i>
+            <span class="text-gray-900">${user.email || 'Não informado'}</span>
+          </div>
+          <div class="flex items-center text-sm">
+            <i class="fas fa-id-card mr-2 text-gray-400"></i>
+            <span class="text-gray-900">${user.cpf || 'Não informado'}</span>
+          </div>
+          <div class="flex items-center text-sm">
+            <i class="fas fa-birthday-cake mr-2 text-gray-400"></i>
+            <span class="text-gray-900">${user.birthdate ? this.formatDate(user.birthdate) : 'Não informado'}</span>
+          </div>
+          <div class="flex items-center text-sm">
+            <i class="fas fa-tasks mr-2 text-gray-400"></i>
+            <span class="text-gray-900">${user.taskCount || 0} tarefas (${user.completedTasks || 0} concluídas)</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          ${this.getUserStatusBadge(user)}
+          <div class="flex space-x-2">
+            <button onclick="userManager.viewUser(${user.id})" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-50 transition duration-150">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button onclick="userManager.editUser(${user.id})" class="text-blue-600 hover:text-blue-900 p-2 rounded-full hover:bg-blue-50 transition duration-150">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="userManager.deleteUser(${user.id})" class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-50 transition duration-150">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  getUserStatusBadge(user) {
+    const isComplete = user.name && user.email && user.cpf && user.birthdate;
+    return `
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        isComplete ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+      }">
+        <i class="fas ${isComplete ? 'fa-check-circle' : 'fa-exclamation-triangle'} mr-1"></i>
+        ${isComplete ? 'Completo' : 'Incompleto'}
+      </span>
+    `;
+  }
+
+  getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  async createUser() {
+    this.showUserModal();
+  }
+
+  async editUser(userId) {
+    const user = this.users.find(u => u.id === userId);
+    if (user) {
+      this.showUserModal(user);
+    }
+  }
+
+  async viewUser(userId) {
+    const user = this.users.find(u => u.id === userId);
+    if (user) {
+      this.showUserDetailModal(user);
+    }
+  }
+
+  async deleteUser(userId) {
+    if (!confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Erro ao excluir usuário');
+      }
+
+      this.showNotification('Usuário excluído com sucesso!', 'success');
+      await this.loadUsers();
+      this.renderUsers();
+      this.updateStatistics();
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      this.showNotification(error.message, 'error');
+    }
+  }
+
+  showUserModal(user = null) {
+    const isEditMode = !!user;
+    const modalHtml = `
+      <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">${isEditMode ? 'Editar Usuário' : 'Novo Usuário'}</h2>
+            <button onclick="userManager.closeUserModal()" class="text-gray-400 hover:text-gray-600">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          <form id="userForm" onsubmit="userManager.handleUserSubmit(event, ${isEditMode}, ${user ? user.id : 'null'})">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nome *</label>
+              <input type="text" id="userName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="${user ? user.name || '' : ''}" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input type="email" id="userEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="${user ? user.email || '' : ''}" placeholder="usuario@exemplo.com">
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">CPF</label>
+              <input type="text" id="userCpf" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="${user ? user.cpf || '' : ''}" placeholder="000.000.000-00">
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Data de Nascimento</label>
+              <input type="date" id="userBirthdate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="${user && user.birthdate ? user.birthdate.split('T')[0] : ''}">
+            </div>
+            ${!isEditMode ? `
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Senha *</label>
+              <input type="password" id="userPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Digite uma senha" required>
+            </div>
+            ` : ''}
+            <div class="flex space-x-3">
+              <button type="button" onclick="userManager.closeUserModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition duration-200">
+                Cancelar
+              </button>
+              <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+                ${isEditMode ? 'Atualizar' : 'Criar'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+
+  showUserDetailModal(user) {
+    const modalHtml = `
+      <div id="userDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Detalhes do Usuário</h2>
+            <button onclick="userManager.closeUserDetailModal()" class="text-gray-400 hover:text-gray-600">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div class="flex items-center space-x-4 mb-6">
+                <div class="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl">
+                  ${this.getInitials(user.name)}
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900">${user.name || 'Nome não informado'}</h3>
+                  <p class="text-gray-500">ID: ${user.id}</p>
+                </div>
+              </div>
+              
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Status do Perfil</label>
+                  <div class="mt-1">${this.getUserStatusBadge(user)}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">Estatísticas de Tarefas</h4>
+              <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-600">Total de Tarefas</span>
+                    <span class="text-lg font-bold text-gray-900">${user.taskCount || 0}</span>
+                  </div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-green-700">Tarefas Concluídas</span>
+                    <span class="text-lg font-bold text-green-900">${user.completedTasks || 0}</span>
+                  </div>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-yellow-700">Tarefas Pendentes</span>
+                    <span class="text-lg font-bold text-yellow-900">${(user.taskCount || 0) - (user.completedTasks || 0)}</span>
+                  </div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-blue-700">Taxa de Conclusão</span>
+                    <span class="text-lg font-bold text-blue-900">${user.taskCount ? Math.round((user.completedTasks / user.taskCount) * 100) : 0}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-8 flex justify-end space-x-3">
+            <button onclick="userManager.editUser(${user.id}); userManager.closeUserDetailModal();" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+              <i class="fas fa-edit mr-2"></i>
+              Editar Usuário
+            </button>
+            <button onclick="userManager.closeUserDetailModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition duration-200">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+
+  closeUserModal() {
+    const modal = document.getElementById('userModal');
+    if (modal) modal.remove();
+  }
+
+  closeUserDetailModal() {
+    const modal = document.getElementById('userDetailModal');
+    if (modal) modal.remove();
+  }
+
+  async handleUserSubmit(event, isEditMode, userId) {
+    event.preventDefault();
+
+    const name = document.getElementById('userName').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const cpf = document.getElementById('userCpf').value.trim();
+    const birthdate = document.getElementById('userBirthdate').value;
+    const password = document.getElementById('userPassword')?.value;
+
+    if (!name) {
+      this.showNotification('Nome é obrigatório', 'error');
+      return;
+    }
+
+    if (!isEditMode && !password) {
+      this.showNotification('Senha é obrigatória para novos usuários', 'error');
+      return;
+    }
+
+    const userData = {
+      name,
+      email: email || null,
+      cpf: cpf || null,
+      birthdate: birthdate || null
+    };
+
+    if (!isEditMode && password) {
+      userData.senha = password;
+    }
+
+    try {
+      const url = isEditMode ? `/api/users/${userId}` : '/api/users';
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || error.message || 'Erro ao salvar usuário');
+      }
+
+      this.showNotification(
+        `Usuário ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`,
+        'success'
+      );
+
+      this.closeUserModal();
+      await this.loadUsers();
+      this.renderUsers();
+      this.updateStatistics();
+
+    } catch (error) {
+      console.error('Error saving user:', error);
+      this.showNotification(error.message, 'error');
+    }
+  }
+
+  // Search and Filter functions
+  searchUsers(searchTerm) {
+    this.searchTerm = searchTerm.toLowerCase();
+    this.applyFilters();
+  }
+
+  filterUsers() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    this.statusFilter = statusFilter;
+    this.applyFilters();
+  }
+
+  sortUsers() {
+    const sortBy = document.getElementById('sortBy').value;
+    this.sortBy = sortBy;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let filtered = [...this.users];
+
+    // Apply search filter
+    if (this.searchTerm) {
+      filtered = filtered.filter(user =>
+        (user.name && user.name.toLowerCase().includes(this.searchTerm)) ||
+        (user.email && user.email.toLowerCase().includes(this.searchTerm)) ||
+        (user.cpf && user.cpf.includes(this.searchTerm))
+      );
+    }
+
+    // Apply status filter
+    if (this.statusFilter) {
+      filtered = filtered.filter(user => {
+        const isComplete = user.name && user.email && user.cpf && user.birthdate;
+        return this.statusFilter === 'complete' ? isComplete : !isComplete;
+      });
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (this.sortBy) {
+        case 'name':
+          aValue = (a.name || '').toLowerCase();
+          bValue = (b.name || '').toLowerCase();
+          break;
+        case 'email':
+          aValue = (a.email || '').toLowerCase();
+          bValue = (b.email || '').toLowerCase();
+          break;
+        case 'created':
+          aValue = new Date(a.created_at || 0);
+          bValue = new Date(b.created_at || 0);
+          break;
+        case 'tasks':
+          aValue = a.taskCount || 0;
+          bValue = b.taskCount || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return this.sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return this.sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    this.filteredUsers = filtered;
+    this.currentPage = 1;
+    this.renderUsers();
+  }
+
+  clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('sortBy').value = 'name';
+    
+    this.searchTerm = '';
+    this.statusFilter = '';
+    this.sortBy = 'name';
+    this.filteredUsers = [...this.users];
+    this.currentPage = 1;
+    this.renderUsers();
+  }
+
+  // View toggle
+  toggleView() {
+    const tableView = document.getElementById('tableView');
+    const cardView = document.getElementById('cardView');
+    const toggle = document.getElementById('viewToggle');
+
+    if (this.currentView === 'table') {
+      this.currentView = 'card';
+      tableView.classList.add('hidden');
+      cardView.classList.remove('hidden');
+      toggle.innerHTML = '<i class="fas fa-list"></i>';
+    } else {
+      this.currentView = 'table';
+      tableView.classList.remove('hidden');
+      cardView.classList.add('hidden');
+      toggle.innerHTML = '<i class="fas fa-th-large"></i>';
+    }
+
+    this.renderUsers();
+  }
+
+  // Selection functions
+  selectAll(checked) {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][value]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = checked;
+      this.toggleUserSelection(parseInt(checkbox.value), checked);
+    });
+  }
+
+  toggleUserSelection(userId, checked) {
+    if (checked) {
+      if (!this.selectedUsers.includes(userId)) {
+        this.selectedUsers.push(userId);
+      }
+    } else {
+      this.selectedUsers = this.selectedUsers.filter(id => id !== userId);
+    }
+
+    this.updateSelectAllCheckbox();
+  }
+
+  updateSelectAllCheckbox() {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][value]');
+    
+    if (checkboxes.length === 0) return;
+
+    const checkedCount = this.selectedUsers.length;
+    const totalCount = checkboxes.length;
+
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+    selectAllCheckbox.checked = checkedCount === totalCount;
+  }
+
+  // Pagination
+  updatePagination() {
+    const totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+    const pagination = document.getElementById('pagination');
+    
+    if (totalPages <= 1) {
+      pagination.classList.add('hidden');
+      return;
+    }
+
+    pagination.classList.remove('hidden');
+
+    // Update pagination info
+    const start = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const end = Math.min(this.currentPage * this.itemsPerPage, this.filteredUsers.length);
+    document.getElementById('paginationInfo').textContent = `${start}-${end} de ${this.filteredUsers.length}`;
+
+    // Update buttons
+    document.getElementById('prevButton').disabled = this.currentPage === 1;
+    document.getElementById('nextButton').disabled = this.currentPage === totalPages;
+
+    // Generate page numbers
+    const pageNumbers = document.getElementById('pageNumbers');
+    pageNumbers.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = `px-3 py-2 border rounded-md text-sm font-medium ${
+          i === this.currentPage
+            ? 'bg-blue-600 text-white border-blue-600'
+            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+        }`;
+        button.onclick = () => this.goToPage(i);
+        pageNumbers.appendChild(button);
+      } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
+        const ellipsis = document.createElement('span');
+        ellipsis.textContent = '...';
+        ellipsis.className = 'px-3 py-2 text-gray-500';
+        pageNumbers.appendChild(ellipsis);
+      }
+    }
+  }
+
+  goToPage(page) {
+    this.currentPage = page;
+    this.renderUsers();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.renderUsers();
+    }
+  }
+
+  nextPage() {
+    const totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+    if (this.currentPage < totalPages) {
+      this.currentPage++;
+      this.renderUsers();
+    }
+  }
+
+  // Utility functions
+  updateStatistics() {
+    const total = this.users.length;
+    const complete = this.users.filter(user => 
+      user.name && user.email && user.cpf && user.birthdate
+    ).length;
+    const incomplete = total - complete;
+    const totalTasks = this.users.reduce((sum, user) => sum + (user.taskCount || 0), 0);
+
+    document.getElementById('totalUsers').textContent = total;
+    document.getElementById('completeProfiles').textContent = complete;
+    document.getElementById('incompleteProfiles').textContent = incomplete;
+    document.getElementById('totalTasks').textContent = totalTasks;
+  }
+
+  updateUserCount() {
+    document.getElementById('userCount').textContent = `${this.filteredUsers.length} usuário${this.filteredUsers.length !== 1 ? 's' : ''}`;
+  }
+
+  showEmptyState() {
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('tableView').classList.add('hidden');
+    document.getElementById('cardView').classList.add('hidden');
+  }
+
+  hideEmptyState() {
+    document.getElementById('emptyState').classList.add('hidden');
+    if (this.currentView === 'table') {
+      document.getElementById('tableView').classList.remove('hidden');
+    } else {
+      document.getElementById('cardView').classList.remove('hidden');
+    }
+  }
+
+  showLoadingState() {
+    document.getElementById('loadingState').classList.remove('hidden');
+  }
+
+  hideLoadingState() {
+    document.getElementById('loadingState').classList.add('hidden');
+  }
+
+  formatDate(dateString) {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  }
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+      type === 'success' ? 'bg-green-500 text-white' :
+      type === 'error' ? 'bg-red-500 text-white' :
+      type === 'warning' ? 'bg-yellow-500 text-black' :
+      'bg-blue-500 text-white'
+    }`;
+    notification.innerHTML = `
+      <div class="flex items-center space-x-2">
+        <i class="fas ${
+          type === 'success' ? 'fa-check-circle' :
+          type === 'error' ? 'fa-exclamation-circle' :
+          type === 'warning' ? 'fa-exclamation-triangle' :
+          'fa-info-circle'
+        }"></i>
+        <span>${message}</span>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+  // Bulk actions
+  showBulkActions() {
+    if (this.selectedUsers.length === 0) {
+      this.showNotification('Selecione usuários primeiro', 'warning');
+      return;
+    }
+
+    const modalHtml = `
+      <div id="bulkActionsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Ações em Lote</h2>
+            <button onclick="userManager.closeBulkActionsModal()" class="text-gray-400 hover:text-gray-600">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          <p class="text-gray-600 mb-6">${this.selectedUsers.length} usuário${this.selectedUsers.length !== 1 ? 's' : ''} selecionado${this.selectedUsers.length !== 1 ? 's' : ''}</p>
+          <div class="space-y-3">
+            <button onclick="userManager.bulkDelete()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition duration-200 flex items-center justify-center">
+              <i class="fas fa-trash mr-2"></i>
+              Excluir Usuários Selecionados
+            </button>
+            <button onclick="userManager.bulkExport()" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition duration-200 flex items-center justify-center">
+              <i class="fas fa-download mr-2"></i>
+              Exportar Usuários Selecionados
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+
+  closeBulkActionsModal() {
+    const modal = document.getElementById('bulkActionsModal');
+    if (modal) modal.remove();
+  }
+
+  async bulkDelete() {
+    if (!confirm(`Tem certeza que deseja excluir ${this.selectedUsers.length} usuário${this.selectedUsers.length !== 1 ? 's' : ''}? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    try {
+      const deletePromises = this.selectedUsers.map(userId =>
+        fetch(`/api/users/${userId}`, { method: 'DELETE' })
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+      const successful = results.filter(result => result.status === 'fulfilled').length;
+      const failed = results.length - successful;
+
+      if (successful > 0) {
+        this.showNotification(`${successful} usuário${successful !== 1 ? 's' : ''} excluído${successful !== 1 ? 's' : ''} com sucesso!`, 'success');
+      }
+
+      if (failed > 0) {
+        this.showNotification(`${failed} usuário${failed !== 1 ? 's' : ''} não pôde${failed === 1 ? '' : 'm'} ser excluído${failed !== 1 ? 's' : ''}`, 'warning');
+      }
+
+      this.selectedUsers = [];
+      this.closeBulkActionsModal();
+      await this.loadUsers();
+      this.renderUsers();
+      this.updateStatistics();
+
+    } catch (error) {
+      console.error('Error in bulk delete:', error);
+      this.showNotification('Erro ao excluir usuários', 'error');
+    }
+  }
+
+  bulkExport() {
+    const selectedUsersData = this.users.filter(user => this.selectedUsers.includes(user.id));
+    this.exportUsersData(selectedUsersData);
+    this.closeBulkActionsModal();
+  }
+
+  exportUsers() {
+    this.exportUsersData(this.users);
+  }
+
+  exportUsersData(usersData) {
+    const headers = ['ID', 'Nome', 'Email', 'CPF', 'Data de Nascimento', 'Tarefas', 'Tarefas Concluídas'];
+    const csvContent = [
+      headers.join(','),
+      ...usersData.map(user => [
+        user.id,
+        `"${user.name || ''}"`,
+        `"${user.email || ''}"`,
+        `"${user.cpf || ''}"`,
+        `"${user.birthdate ? this.formatDate(user.birthdate) : ''}"`,
+        user.taskCount || 0,
+        user.completedTasks || 0
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `usuarios_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.showNotification('Dados exportados com sucesso!', 'success');
+  }
+}
+
+// Initialize the user manager
+const userManager = new UserManager();
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  userManager.init();
+});
+</script>-700">Email</label>
+                  <p class="mt-1 text-sm text-gray-900">${user.email || 'Não informado'}</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">CPF</label>
+                  <p class="mt-1 text-sm text-gray-900">${user.cpf || 'Não informado'}</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                  <p class="mt-1 text-sm text-gray-900">${user.birthdate ? this.formatDate(user.birthdate) : 'Não informado'}</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray

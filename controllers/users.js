@@ -1,11 +1,11 @@
 const pool = require('../config/database');
 
 exports.criarUsuario = async (req, res) => {
-  const { name, cpf, birthdate } = req.body;
+  const { name, cpf, birthdate,email,senha } = req.body;
   const query = 'INSERT INTO users (name, cpf, birthdate, email, senha) VALUES ($1, $2, $3, $4, $5) RETURNING *';
 
   try {
-    const result = await pool.query(query, [name, cpf, birthdate]);
+    const result = await pool.query(query, [name, cpf, birthdate,email,senha]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });

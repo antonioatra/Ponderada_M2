@@ -1,0 +1,838 @@
+<!-- Enhanced Tasks Page with full features -->
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 bg-white rounded-lg shadow-sm p-6">
+      <div class="mb-4 sm:mb-0 flex-1">
+        <h1 class="text-3xl font-bold text-gray-900">Gerenciador de Tarefas</h1>
+        <p class="text-gray-600 mt-1">Organize suas tarefas com prioridades, categorias e tags</p>
+        
+        <!-- User Selector -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Selecionar Usuário:</label>
+          <select id="userSelector" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" onchange="handleUserChange()">
+            <option value="">Carregando usuários...</option>
+          </select>
+        </div>
+      </div>
+      <button 
+        id="newTaskBtn"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        onclick="createTask()"
+        disabled
+      >
+        <i class="fas fa-plus"></i>
+        <span>Nova Tarefa</span>
+      </button>
+    </div>
+
+    <!-- Tasks Container -->
+    <div class="bg-white rounded-lg shadow-sm">
+      <!-- Task Filters -->
+      <div class="border-b border-gray-200 p-6">
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button 
+            class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition duration-200 bg-blue-600 text-white" 
+            data-filter="all"
+          >
+            Todas
+          </button>
+          <button 
+            class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200" 
+            data-filter="pending"
+          >
+            Pendentes
+          </button>
+          <button 
+            class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200" 
+            data-filter="completed"
+          >
+            Concluídas
+          </button>
+          <button 
+            class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200" 
+            data-filter="high-priority"
+          >
+            Alta Prioridade
+          </button>
+        </div>
+        
+        <!-- Priority Legend -->
+        <div class="flex flex-wrap items-center gap-4 text-sm">
+          <span class="text-gray-600">Prioridades:</span>
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span class="text-gray-700">Alta</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <span class="text-gray-700">Média</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span class="text-gray-700">Baixa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks List -->
+      <div class="p-6" id="tasksList">
+        <!-- Tasks will be loaded here -->
+        <div class="text-center py-12">
+          <div class="text-gray-400 mb-4">
+            <i class="fas fa-user text-6xl"></i>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Selecione um usuário</h3>
+          <p class="text-gray-600">Escolha um usuário para visualizar suas tarefas</p>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="text-center py-12 hidden" id="emptyState">
+        <div class="text-gray-400 mb-4">
+          <i class="fas fa-tasks text-6xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhuma tarefa encontrada</h3>
+        <p class="text-gray-600 mb-6">Comece criando sua primeira tarefa!</p>
+        <button 
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200"
+          onclick="createTask()"
+        >
+          Criar Primeira Tarefa
+        </button>
+      </div>
+    </div>
+
+    <!-- Task Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8" id="taskStats" style="display: none;">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-blue-100 rounded-lg p-3">
+            <i class="fas fa-tasks text-blue-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total</p>
+            <p class="text-2xl font-bold text-gray-900" data-stat="total">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-yellow-100 rounded-lg p-3">
+            <i class="fas fa-clock text-yellow-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pendentes</p>
+            <p class="text-2xl font-bold text-gray-900" data-stat="pending">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-green-100 rounded-lg p-3">
+            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Concluídas</p>
+            <p class="text-2xl font-bold text-gray-900" data-stat="completed">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center">
+          <div class="bg-red-100 rounded-lg p-3">
+            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Alta Prioridade</p>
+            <p class="text-2xl font-bold text-gray-900" data-stat="highPriority">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Enhanced Task management with priorities, categories, and tags
+let tasks = [];
+let users = [];
+let priorities = [];
+let categories = [];
+let tags = [];
+let currentUserId = null;
+let isEditMode = false;
+let editingTaskId = null;
+
+// Load initial data
+async function loadInitialData() {
+  try {
+    await Promise.all([
+      loadUsers(),
+      loadPriorities(),
+      loadCategories(),
+      loadTags()
+    ]);
+  } catch (error) {
+    console.error('Error loading initial data:', error);
+    showNotification('Erro ao carregar dados iniciais', 'error');
+  }
+}
+
+async function loadUsers() {
+  try {
+    const response = await fetch('/api/users');
+    if (!response.ok) throw new Error('Erro ao carregar usuários');
+    
+    users = await response.json();
+    populateUserSelector();
+  } catch (error) {
+    console.error('Error loading users:', error);
+    showNotification('Erro ao carregar usuários: ' + error.message, 'error');
+  }
+}
+
+async function loadPriorities() {
+  try {
+    const response = await fetch('/api/priorities');
+    if (!response.ok) throw new Error('Erro ao carregar prioridades');
+    priorities = await response.json();
+  } catch (error) {
+    console.error('Error loading priorities:', error);
+  }
+}
+
+async function loadCategories() {
+  try {
+    const response = await fetch('/api/categories');
+    if (!response.ok) throw new Error('Erro ao carregar categorias');
+    categories = await response.json();
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
+}
+
+async function loadTags() {
+  try {
+    const response = await fetch('/api/tasks/1/tags'); // This might need adjustment based on your API
+    if (response.ok) {
+      tags = await response.json();
+    }
+  } catch (error) {
+    console.error('Error loading tags:', error);
+  }
+}
+
+function populateUserSelector() {
+  const selector = document.getElementById('userSelector');
+  if (users.length === 0) {
+    selector.innerHTML = '<option value="">Nenhum usuário encontrado</option>';
+    return;
+  }
+  
+  selector.innerHTML = '<option value="">Selecione um usuário</option>' +
+    users.map(user => `<option value="${user.id}">${user.name || 'Usuário ' + user.id}</option>`).join('');
+}
+
+function handleUserChange() {
+  const selector = document.getElementById('userSelector');
+  const newTaskBtn = document.getElementById('newTaskBtn');
+  const taskStats = document.getElementById('taskStats');
+  
+  currentUserId = selector.value ? parseInt(selector.value) : null;
+  
+  if (currentUserId) {
+    newTaskBtn.disabled = false;
+    taskStats.style.display = 'grid';
+    loadTasks();
+  } else {
+    newTaskBtn.disabled = true;
+    taskStats.style.display = 'none';
+    const tasksList = document.getElementById('tasksList');
+    tasksList.innerHTML = `
+      <div class="text-center py-12">
+        <div class="text-gray-400 mb-4">
+          <i class="fas fa-user text-6xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Selecione um usuário</h3>
+        <p class="text-gray-600">Escolha um usuário para visualizar suas tarefas</p>
+      </div>
+    `;
+  }
+}
+
+async function loadTasks() {
+  if (!currentUserId) return;
+  
+  const tasksList = document.getElementById('tasksList');
+  
+  try {
+    showLoading(tasksList);
+    
+    // Load tasks
+    const tasksResponse = await fetch(`/api/tasks/${currentUserId}`);
+    
+    if (tasksResponse.status === 404) {
+      tasks = [];
+      renderTasks([]);
+      updateTaskStats();
+      return;
+    }
+    
+    if (!tasksResponse.ok) {
+      throw new Error('Erro ao carregar tarefas');
+    }
+    
+    tasks = await tasksResponse.json();
+    
+    // Load task priorities
+    await loadTaskPriorities();
+    
+    renderTasks(tasks);
+    updateTaskStats();
+    
+  } catch (error) {
+    console.error('Error loading tasks:', error);
+    tasksList.innerHTML = `
+      <div class="text-center py-12">
+        <div class="text-red-400 mb-4">
+          <i class="fas fa-exclamation-triangle text-6xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Erro ao carregar tarefas</h3>
+        <p class="text-gray-600 mb-6">${error.message}</p>
+        <button onclick="loadTasks()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-200">
+          Tentar Novamente
+        </button>
+      </div>
+    `;
+  }
+}
+
+async function loadTaskPriorities() {
+  for (let task of tasks) {
+    try {
+      const response = await fetch(`/api/tasks/${task.id}/priority`);
+      if (response.ok) {
+        const priorityData = await response.json();
+        if (priorityData && priorityData.length > 0) {
+          const priority = priorities.find(p => p.id === priorityData[0].priority_id);
+          task.priority = priority;
+        }
+      }
+    } catch (error) {
+      console.error(`Error loading priority for task ${task.id}:`, error);
+    }
+  }
+}
+
+function renderTasks(taskList) {
+  const tasksList = document.getElementById('tasksList');
+  const emptyState = document.getElementById('emptyState');
+  
+  if (taskList.length === 0) {
+    tasksList.innerHTML = '';
+    emptyState.classList.remove('hidden');
+    return;
+  }
+  
+  emptyState.classList.add('hidden');
+  
+  const tasksHtml = taskList.map(task => {
+    const isCompleted = task.status === 'completed';
+    const statusColor = isCompleted ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+    const statusIcon = isCompleted ? 'fa-check-circle' : 'fa-clock';
+    
+    // Priority display
+    let priorityBadge = '';
+    if (task.priority) {
+      const priorityColor = task.priority.label === 'ALTA' ? 'bg-red-100 text-red-800' :
+                           task.priority.label === 'MEDIA' ? 'bg-yellow-100 text-yellow-800' :
+                           'bg-green-100 text-green-800';
+      priorityBadge = `
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${priorityColor}">
+          <i class="fas fa-flag mr-1"></i>
+          ${task.priority.label}
+        </span>
+      `;
+    }
+    
+    return `
+      <div class="task-item bg-white border border-gray-200 rounded-lg p-6 mb-4 hover:shadow-md transition duration-200 hover:border-gray-300">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+          <div class="flex-1 mb-4 lg:mb-0">
+            <div class="flex items-start space-x-3">
+              <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                     onchange="toggleTaskStatus(${task.id}, this.checked)" 
+                     class="mt-1 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold mb-2 ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'}">
+                  ${task.title || 'Título não informado'}
+                </h3>
+                <p class="text-gray-600 mb-3 leading-relaxed ${isCompleted ? 'text-gray-400' : ''}">
+                  ${task.description || 'Sem descrição'}
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColor}">
+                    <i class="fas ${statusIcon} mr-1"></i>
+                    ${isCompleted ? 'Concluída' : 'Pendente'}
+                  </span>
+                  ${priorityBadge}
+                  ${task.created_at ? `
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <i class="fas fa-calendar mr-1"></i>
+                      ${formatDate(task.created_at)}
+                    </span>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 lg:ml-4">
+            <button onclick="viewTaskDetails(${task.id})" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-1">
+              <i class="fas fa-eye"></i>
+              <span>Detalhes</span>
+            </button>
+            <button onclick="editTask(${task.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-1">
+              <i class="fas fa-edit"></i>
+              <span>Editar</span>
+            </button>
+            <button onclick="deleteTask(${task.id})" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-1">
+              <i class="fas fa-trash"></i>
+              <span>Excluir</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  tasksList.innerHTML = tasksHtml;
+}
+
+function updateTaskStats() {
+  const totalTasks = tasks.length;
+  const pendingTasks = tasks.filter(task => task.status !== 'completed').length;
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const highPriorityTasks = tasks.filter(task => task.priority && task.priority.label === 'ALTA').length;
+  
+  const totalElement = document.querySelector('[data-stat="total"]');
+  const pendingElement = document.querySelector('[data-stat="pending"]');
+  const completedElement = document.querySelector('[data-stat="completed"]');
+  const highPriorityElement = document.querySelector('[data-stat="highPriority"]');
+  
+  if (totalElement) totalElement.textContent = totalTasks;
+  if (pendingElement) pendingElement.textContent = pendingTasks;
+  if (completedElement) completedElement.textContent = completedTasks;
+  if (highPriorityElement) highPriorityElement.textContent = highPriorityTasks;
+}
+
+async function toggleTaskStatus(taskId, isCompleted) {
+  try {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    const newStatus = isCompleted ? 'completed' : 'pending';
+    
+    const response = await fetch(`/api/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: task.title,
+        description: task.description,
+        status: newStatus
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar status da tarefa');
+    }
+    
+    task.status = newStatus;
+    renderTasks(tasks);
+    updateTaskStats();
+    
+    showNotification(
+      `Tarefa marcada como ${isCompleted ? 'concluída' : 'pendente'}!`, 
+      'success'
+    );
+    
+  } catch (error) {
+    console.error('Error updating task status:', error);
+    showNotification(error.message, 'error');
+    loadTasks();
+  }
+}
+
+function createTask() {
+  if (!currentUserId) {
+    showNotification('Selecione um usuário primeiro', 'warning');
+    return;
+  }
+  showTaskModal();
+}
+
+function editTask(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  if (task) {
+    showTaskModal(task);
+  }
+}
+
+function viewTaskDetails(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  if (task) {
+    showTaskDetailsModal(task);
+  }
+}
+
+async function deleteTask(taskId) {
+  if (!confirm('Tem certeza que deseja excluir esta tarefa?')) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/api/tasks/${taskId}`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Erro ao excluir tarefa');
+    }
+    
+    showNotification('Tarefa excluída com sucesso!', 'success');
+    loadTasks();
+    
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    showNotification(error.message, 'error');
+  }
+}
+
+function showTaskModal(task = null) {
+  isEditMode = !!task;
+  editingTaskId = task ? task.id : null;
+  
+  const priorityOptions = priorities.map(p => `
+    <option value="${p.id}" ${task && task.priority && task.priority.id === p.id ? 'selected' : ''}>
+      ${p.label}
+    </option>
+  `).join('');
+  
+  const modalHtml = `
+    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">${isEditMode ? 'Editar Tarefa' : 'Nova Tarefa'}</h2>
+          <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <form id="taskForm" onsubmit="handleTaskSubmit(event)">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Título *</label>
+              <input type="text" id="taskTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="${task ? task.title || '' : ''}" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <select id="taskStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <option value="pending" ${task && task.status === 'pending' ? 'selected' : ''}>Pendente</option>
+                <option value="completed" ${task && task.status === 'completed' ? 'selected' : ''}>Concluída</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+            <textarea id="taskDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Descreva a tarefa...">${task ? task.description || '' : ''}</textarea>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+            <select id="taskPriority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Selecione uma prioridade</option>
+              ${priorityOptions}
+            </select>
+          </div>
+          <div class="flex space-x-3">
+            <button type="button" onclick="closeTaskModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition duration-200">
+              Cancelar
+            </button>
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+              ${isEditMode ? 'Atualizar' : 'Criar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function showTaskDetailsModal(task) {
+  const priority = task.priority ? `
+    <div class="flex items-center space-x-2">
+      <span class="text-sm font-medium text-gray-600">Prioridade:</span>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+        task.priority.label === 'ALTA' ? 'bg-red-100 text-red-800' :
+        task.priority.label === 'MEDIA' ? 'bg-yellow-100 text-yellow-800' :
+        'bg-green-100 text-green-800'
+      }">
+        <i class="fas fa-flag mr-1"></i>
+        ${task.priority.label}
+      </span>
+    </div>
+  ` : '<p class="text-sm text-gray-500">Sem prioridade definida</p>';
+  
+  const modalHtml = `
+    <div id="taskDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">Detalhes da Tarefa</h2>
+          <button onclick="closeTaskDetailsModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">${task.title}</h3>
+            <p class="text-gray-600">${task.description || 'Sem descrição'}</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <span class="text-sm font-medium text-gray-600">Status:</span>
+              <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }">
+                <i class="fas ${task.status === 'completed' ? 'fa-check-circle' : 'fa-clock'} mr-1"></i>
+                ${task.status === 'completed' ? 'Concluída' : 'Pendente'}
+              </span>
+            </div>
+            
+            <div>
+              <span class="text-sm font-medium text-gray-600">Criada em:</span>
+              <span class="ml-2 text-sm text-gray-900">${formatDateTime(task.created_at)}</span>
+            </div>
+          </div>
+          
+          <div>
+            ${priority}
+          </div>
+          
+          <div class="border-t pt-4">
+            <div class="flex space-x-3">
+              <button onclick="editTask(${task.id}); closeTaskDetailsModal();" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center space-x-1">
+                <i class="fas fa-edit"></i>
+                <span>Editar Tarefa</span>
+              </button>
+              <button onclick="closeTaskDetailsModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition duration-200">
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeTaskModal() {
+  const modal = document.getElementById('taskModal');
+  if (modal) {
+    modal.remove();
+  }
+}
+
+function closeTaskDetailsModal() {
+  const modal = document.getElementById('taskDetailsModal');
+  if (modal) {
+    modal.remove();
+  }
+}
+
+async function handleTaskSubmit(event) {
+  event.preventDefault();
+  
+  const title = document.getElementById('taskTitle').value.trim();
+  const description = document.getElementById('taskDescription').value.trim();
+  const status = document.getElementById('taskStatus').value;
+  const priorityId = document.getElementById('taskPriority').value;
+  
+  if (!title) {
+    showNotification('Título é obrigatório', 'error');
+    return;
+  }
+  
+  const taskData = {
+    title,
+    description: description || null,
+    status
+  };
+  
+  if (!isEditMode) {
+    taskData.user_id = currentUserId;
+  }
+  
+  try {
+    const url = isEditMode ? `/api/tasks/${editingTaskId}` : '/api/tasks';
+    const method = isEditMode ? 'PUT' : 'POST';
+    
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(taskData)
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || error.message || 'Erro ao salvar tarefa');
+    }
+    
+    const result = await response.json();
+    
+    // Set priority if selected
+    if (priorityId && result.id) {
+      try {
+        const priorityResponse = await fetch(`/api/tasks/${result.id}/priority`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            task_id: result.id,
+            priority_id: parseInt(priorityId)
+          })
+        });
+        
+        if (!priorityResponse.ok) {
+          console.warn('Erro ao definir prioridade da tarefa');
+        }
+      } catch (priorityError) {
+        console.warn('Erro ao definir prioridade:', priorityError);
+      }
+    }
+    
+    showNotification(
+      `Tarefa ${isEditMode ? 'atualizada' : 'criada'} com sucesso!`, 
+      'success'
+    );
+    
+    closeTaskModal();
+    loadTasks();
+    
+  } catch (error) {
+    console.error('Error saving task:', error);
+    showNotification(error.message, 'error');
+  }
+}
+
+// Filter functionality
+function filterTasks(filterType) {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  
+  // Update button states
+  filterButtons.forEach(btn => {
+    btn.classList.remove('bg-blue-600', 'text-white');
+    btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+  });
+  
+  const activeButton = document.querySelector(`[data-filter="${filterType}"]`);
+  if (activeButton) {
+    activeButton.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+    activeButton.classList.add('bg-blue-600', 'text-white');
+  }
+  
+  // Filter tasks
+  let filteredTasks = tasks;
+  if (filterType === 'pending') {
+    filteredTasks = tasks.filter(task => task.status !== 'completed');
+  } else if (filterType === 'completed') {
+    filteredTasks = tasks.filter(task => task.status === 'completed');
+  } else if (filterType === 'high-priority') {
+    filteredTasks = tasks.filter(task => task.priority && task.priority.label === 'ALTA');
+  }
+  
+  renderTasks(filteredTasks);
+}
+
+// Utility functions
+function showLoading(element) {
+  if (element) {
+    element.innerHTML = `
+      <div class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-2 text-gray-600">Carregando tarefas...</span>
+      </div>
+    `;
+  }
+}
+
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+    type === 'success' ? 'bg-green-500 text-white' :
+    type === 'error' ? 'bg-red-500 text-white' :
+    type === 'warning' ? 'bg-yellow-500 text-black' :
+    'bg-blue-500 text-white'
+  }`;
+  notification.innerHTML = `
+    <div class="flex items-center space-x-2">
+      <i class="fas ${
+        type === 'success' ? 'fa-check-circle' :
+        type === 'error' ? 'fa-exclamation-circle' :
+        type === 'warning' ? 'fa-exclamation-triangle' :
+        'fa-info-circle'
+      }"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+}
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR');
+}
+
+function formatDateTime(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleString('pt-BR');
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  loadInitialData();
+  
+  // Add filter event listeners
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const filter = this.getAttribute('data-filter');
+      filterTasks(filter);
+    });
+  });
+});
+</script>

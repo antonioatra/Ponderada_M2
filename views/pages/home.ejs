@@ -1,0 +1,64 @@
+<!-- views/pages/home.ejs - Simplified home page with Tailwind -->
+<div class="min-h-screen bg-gray-50">
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          Bem-vindo ao Task Manager
+        </h1>
+        <p class="text-xl md:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+          Organize suas tarefas de forma eficiente e produtiva
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a href="/tasks" class="bg-white text-blue-700 hover:bg-blue-50 px-8 py-4 rounded-lg font-semibold text-lg transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            Ver Minhas Tarefas
+          </a>
+          <a href="/users" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 px-8 py-4 rounded-lg font-semibold text-lg transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            Gerenciar Usuários
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+        <!-- Feature Card 1 -->
+        <div class="bg-white rounded-xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition duration-300 transform hover:-translate-y-2 group">
+          <div class="mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition duration-300">
+              📝 Gerenciar Tarefas
+            </h3>
+          </div>
+        </div>
+
+        <!-- Feature Card 2 -->
+        <div class="bg-white rounded-xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition duration-300 transform hover:-translate-y-2 group">
+          <div class="mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition duration-300">
+              👥 Colaboração
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed text-lg">
+            Trabalhe em equipe e compartilhe tarefas
+          </p>
+        </div>
+
+        <!-- Feature Card 3 -->
+        <div class="bg-white rounded-xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition duration-300 transform hover:-translate-y-2 group">
+          <div class="mb-6">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition duration-300">
+              ⏰ Lembretes
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed text-lg">
+            Nunca mais esqueça de uma tarefa importante
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
