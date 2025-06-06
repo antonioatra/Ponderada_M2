@@ -1,7 +1,6 @@
-<!-- Complete User Management System -->
+
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <div class="mb-4 sm:mb-0">
@@ -17,7 +16,6 @@
       </div>
     </div>
 
-    <!-- Search and Filters -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
@@ -57,7 +55,6 @@
       </div>
     </div>
 
-    <!-- User Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       <div class="bg-white rounded-lg shadow-sm p-6">
         <div class="flex items-center">
@@ -228,7 +225,6 @@ class UserManager {
       
       this.users = await response.json();
       
-      // Load task counts for each user
       await this.loadUserTaskCounts();
       
       this.filteredUsers = [...this.users];
@@ -1057,16 +1053,4 @@ const userManager = new UserManager();
 document.addEventListener('DOMContentLoaded', function() {
   userManager.init();
 });
-</script>-700">Email</label>
-                  <p class="mt-1 text-sm text-gray-900">${user.email || 'Não informado'}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">CPF</label>
-                  <p class="mt-1 text-sm text-gray-900">${user.cpf || 'Não informado'}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
-                  <p class="mt-1 text-sm text-gray-900">${user.birthdate ? this.formatDate(user.birthdate) : 'Não informado'}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray
+</script>
