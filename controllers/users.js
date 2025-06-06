@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 exports.criarUsuario = async (req, res) => {
   const { name, cpf, birthdate } = req.body;
-  const query = 'INSERT INTO users (name, cpf, birthdate) VALUES ($1, $2, $3) RETURNING *';
+  const query = 'INSERT INTO users (name, cpf, birthdate, email, senha) VALUES ($1, $2, $3, $4, $5) RETURNING *';
 
   try {
     const result = await pool.query(query, [name, cpf, birthdate]);
@@ -15,7 +15,7 @@ exports.criarUsuario = async (req, res) => {
 exports.editarUsuario = async (req,res) => {
   const {id} = req.params;
   const {name, cpf, birthdate} = req.body;
-  const query = "UPDATE users SET name=$1, cpf=$2, birthdate=$3 WHERE id = $4 RETURNING *"
+  const query = "UPDATE users SET name=$1, cpf=$2, birthdate=$3, senha = $4 WHERE id = $5 RETURNING *"
   const values = [name, cpf, birthdate, id]
 
   try {
