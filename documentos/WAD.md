@@ -711,7 +711,12 @@ http://localhost:3000/api
 
 ### 3.7 Interface e Navegação (Semana 07)
 
-*Descreva e ilustre aqui o desenvolvimento do frontend do sistema web, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+&emsp;O desenvolvimento da interface de navegação foi feita usando EJS e CSS-Tailwind. <br> <br>
+  <img src="../assets/print1.png">
+
+&emsp;Dentro do exemplo é possível ver que existem funções, estas funções permitem a integração do front-end com o back-end para que se possa visualizar as informações no front-end.<br><br>
+  <img src="../assets/print2.png">
+
 
 ---
 
@@ -719,19 +724,13 @@ http://localhost:3000/api
 
 ### 4.1 Demonstração do Sistema Web (Semana 8)
 
-*VIDEO: Insira o link do vídeo demonstrativo nesta seção*
-*Descreva e ilustre aqui o desenvolvimento do sistema web completo, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+https://drive.google.com/file/d/1KLmIl_R-y4k86jieIWBf-UrZWK4UEqFz/view?usp=sharing <br>
+
+&emsp; A plataforma foi feita usando EJS, CSS-Tailwind e JavaScript e apresenta um gerenciador de tarefas por meio de um integração com o banco de dados. Para fazer essa integração foi ultilizada uma arquitetura de camadas que é dividida em 3: Model, View e Controller. Essa arquitetura permite a reutilização de código e facilita a manutenção da aplicação.<br>
+  <img src="../assets/print3.png">
 
 ### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
 
-*Indique pontos fortes e pontos a melhorar de maneira geral.*
-*Relacione também quaisquer outras ideias que você tenha para melhorias futuras.*
+&emsp; Essa foi a minha primeira aplicação Web com uma integração com banco de dados e serviu como um gigantesco aprendizado. Futuramente pretendo implementar novas funcionalidades para que a aplicação possa atingir maiores necessidades.
 
 
-
-## <a name="c5"></a>5. Referências
-
-_Incluir as principais referências de seu projeto, para que o leitor possa consultar caso ele se interessar em aprofundar._<br>
-
----
----
